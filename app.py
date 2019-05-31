@@ -48,9 +48,9 @@ def handle_message(event):
                         "label": "選擇出發日期",
                         "data": "setOutDate",
                         "mode": "date",
-                        "initial": strftime("%Y-%m-%dt00:00", gmtime()),
-                        "max": strftime("%Y-%m-%dt00:00", localtime(time() + 60*60*24*365)),
-                        "min": strftime("%Y-%m-%dt00:00", gmtime()),
+                        "initial": strftime("%Y-%m-%d", gmtime()),
+                        "max": strftime("%Y-%m-%d", localtime(time() + 60*60*24*365)),
+                        "min": strftime("%Y-%m-%d", gmtime()),
                     }
                 ]
             )
