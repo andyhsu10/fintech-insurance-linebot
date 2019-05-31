@@ -49,7 +49,7 @@ def handle_message(event):
                         "data": "setOutDate",
                         "mode": "date",
                         "initial": strftime("%Y-%m-%dt00:00", gmtime()),
-                        "max": strftime("%Y-%m-%dt00:00", localtime(time + 60*60*24*365)),
+                        "max": strftime("%Y-%m-%dt00:00", localtime(time() + 60*60*24*365)),
                         "min": strftime("%Y-%m-%dt00:00", gmtime()),
                     }
                 ]
