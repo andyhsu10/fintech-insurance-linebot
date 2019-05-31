@@ -7,6 +7,7 @@ from linebot.exceptions import (
     InvalidSignatureError
 )
 from linebot.models import *
+from time import gmtime, strftime, localtime, time
 import os
 
 app = Flask(__name__)
@@ -34,8 +35,30 @@ def callback():
 # 處理訊息
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    message = TextSendMessage(text=event.message.text)
-    line_bot_api.reply_message(event.reply_token, message)
+    if event.message.text == '選擇日期':
+        message = TemplateSendMessage(
+            alt_text = '選擇日期',
+            template = ButtonsTemplate(
+                thumbnail_image_uri = 'https://familylivingtoday.com/wp-content/uploads/2018/09/beach-umbrella.jpg',
+                title = '選擇日期',
+                text = '請選擇您出發的日期',
+                actions = [
+                    {
+                        "type": "datetimepicker",
+                        "label": "選擇出發日期",
+                        "data": "setOutDate",
+                        "mode": "date",
+                        "initial": strftime("%Y-%m-%dt00:00", gmtime()),
+                        "max": strftime("%Y-%m-%dt00:00", localtime(time + 60*60*24*365)),
+                        "min": strftime("%Y-%m-%dt00:00", gmtime()),
+                    }
+                ]
+            )
+        )
+        line_bot_api.reply_message(event.reply_token, message)
+    else:
+        message = TextSendMessage(text=event.message.text)
+        line_bot_api.reply_message(event.reply_token, message)
 
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
