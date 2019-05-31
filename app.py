@@ -39,7 +39,9 @@ def handle_message(event):
         message = TemplateSendMessage(
             alt_text = '選擇日期',
             template = ButtonsTemplate(
-                thumbnail_image_uri = 'https://familylivingtoday.com/wp-content/uploads/2018/09/beach-umbrella.jpg',
+                thumbnailImageUrl = 'https://familylivingtoday.com/wp-content/uploads/2018/09/beach-umbrella.jpg',
+                imageAspectRation = "rectangle",
+                imageSize = "cover",
                 title = '選擇日期',
                 text = '請選擇您出發的日期',
                 actions = [
@@ -57,7 +59,10 @@ def handle_message(event):
         )
         line_bot_api.reply_message(event.reply_token, message)
     else:
-        message = TextSendMessage(text=event.message.text)
+        if event.postback.data:
+            message = TextSendMessage(text=event.postback.data)
+        else:
+            message = TextSendMessage(text=event.message.text)
         line_bot_api.reply_message(event.reply_token, message)
 
 if __name__ == "__main__":
