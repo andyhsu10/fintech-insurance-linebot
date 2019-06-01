@@ -59,10 +59,14 @@ def handle_message(event):
         )
         line_bot_api.reply_message(event.reply_token, message)
     else:
-        if event.postback:
-            message = TextSendMessage(text=event.postback)
-        else:
-            message = TextSendMessage(text=event.message.text)
+        message = TextSendMessage(text=event.message.text)
+        line_bot_api.reply_message(event.reply_token, message)
+
+# 處理User postback的資訊
+@handler.add(PostbackEvent)
+def handle_postback(event):
+    if event.postback.data == 'setOutDate':
+        message = TextSendMessage(text=event.postback.params['date'])
         line_bot_api.reply_message(event.reply_token, message)
 
 if __name__ == "__main__":
