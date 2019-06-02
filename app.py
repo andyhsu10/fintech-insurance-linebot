@@ -7,7 +7,6 @@ from linebot.exceptions import (
     InvalidSignatureError
 )
 from linebot.models import *
-from time import gmtime, strftime, localtime, time
 from state.insurance_state import InitState
 import os
 

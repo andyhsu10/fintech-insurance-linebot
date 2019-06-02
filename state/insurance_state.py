@@ -1,5 +1,6 @@
 from state.state import State
 from linebot.models import *
+from time import gmtime, strftime, localtime, time
 
 class InitState(State):
     message = TemplateSendMessage(
