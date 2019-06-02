@@ -1,6 +1,6 @@
 from state.state import State
 from linebot.models import *
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import json
 
 region_dict = {
@@ -144,9 +144,9 @@ class StartDateState(State):
                         "label": "選擇出發日期",
                         "data": "startDate",
                         "mode": "date",
-                        "initial": datetime.now().strftime("%Y-%m-%d"),
-                        "max": (datetime.now() + timedelta(days=364)).strftime("%Y-%m-%d"),
-                        "min": datetime.now().strftime("%Y-%m-%d"),
+                        "initial": datetime.now(timezone(timedelta(hours=8))).strftime("%Y-%m-%d"),
+                        "max": (datetime.now(timezone(timedelta(hours=8))) + timedelta(days=364)).strftime("%Y-%m-%d"),
+                        "min": datetime.now(timezone(timedelta(hours=8))).strftime("%Y-%m-%d"),
                     }
                 ]
             )
