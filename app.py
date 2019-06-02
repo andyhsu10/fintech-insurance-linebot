@@ -73,7 +73,9 @@ def handle_message(event):
                     QuickReplyButton(action=MessageAction(label="label8", text="8人")),
                     QuickReplyButton(action=MessageAction(label="label9", text="9人")),
                     QuickReplyButton(action=MessageAction(label="label10", text="10人"))
-                ]))
+                ]
+            ))
+        line_bot_api.reply_message(event.reply_token, message)
     else:
         message = TextSendMessage(text=event.message.text)
         line_bot_api.reply_message(event.reply_token, message)
