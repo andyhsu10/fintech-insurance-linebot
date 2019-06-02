@@ -27,9 +27,9 @@ class InsuranceBot(object):
         self.state = InitState()
         self.msg = self.state.message
 
-    def on_event(self, event):
+    def on_event(self, event, data):
         # The next state will be the result of the on_event function.
-        self.state = self.state.on_event(event)
+        self.state = self.state.on_event(event, data)
         self.msg = self.state.message
 
 # 監聽所有來自 /callback 的 Post Request
