@@ -25,6 +25,7 @@ class InsuranceBot(object):
 
         # Start with a default state.
         self.state = InitState()
+        self.msg = self.state.message
 
     def on_event(self, event):
         # The next state will be the result of the on_event function.
