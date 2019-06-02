@@ -3,6 +3,21 @@ from linebot.models import *
 from time import gmtime, strftime, localtime, time
 import json
 
+region_dict = {
+    "eastAsia_oceania" = "中日韓、紐澳", 
+    "southEastAsis" = "東南亞", 
+    "west" = "歐洲、美加", 
+    "middleEast" = "中東", 
+    "southAmerica" = "南美、南亞", 
+    "africa" = "非洲"
+}
+
+purpose_dict = {
+    "travel" = "旅遊",
+    "business" = "出差",
+    "studyTour" = "遊學"
+}
+
 class InitState(State):
     message = TemplateSendMessage(
             alt_text = '請問您需要什麼服務？',
@@ -17,14 +32,20 @@ class InitState(State):
                         "data":"calculate",
                     },
                     {
-                        "type":"postback",
+                        "type":"uri",
                         "label":"投保問題",
-                        "data":"insurance_qa",
+                        "uri":"https://www.ntust.edu.tw/home.php",
+                        "altUri": {
+                            "desktop": "https://www.ntust.edu.tw/home.php"
+                        }
                     },
                     {
-                        "type":"postback",
+                        "type":"uri",
                         "label":"理賠問題",
-                        "data":"claim_qa",
+                        "uri":"https://www.cs.ntust.edu.tw/index.php/zh/",
+                        "altUri": {
+                            "desktop": "https://www.cs.ntust.edu.tw/index.php/zh/"
+                        }
                     },
                 ]
             )
@@ -163,7 +184,7 @@ class FinalState(State):
         self.data = {}
         if kwargs.get('data'):
             self.data = kwargs.get('data')
-            self.message = TextSendMessage(text='投保人數：'+str(self.data['numOfPeople'])+'\n旅遊地區：'+str(self.data['region'])+'\n旅遊目的：'+str(self.data['purpose'])+'\n旅遊日期：'+str(self.data['startDate'])+' ~ '+str(self.data['endDate']))
+            self.message = TextSendMessage(text='以下是您輸入的資訊：\n人數：'+str(self.data['numOfPeople'])+'人\n地區：'+str(region_dict[self.data['region']])+'\n目的：'+str(purpose_dict[self.data['purpose']])+'\n日期：'+str(self.data['startDate'])+' ~ '+str(self.data['endDate']))
 
     def on_event(self, event):
         if event == 'finish':
