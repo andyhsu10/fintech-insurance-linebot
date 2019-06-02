@@ -1,6 +1,7 @@
 from state.state import State
 from linebot.models import *
 from time import gmtime, strftime, localtime, time
+import json
 
 class InitState(State):
     message = TemplateSendMessage(
@@ -162,8 +163,8 @@ class FinalState(State):
         self.data = {}
         if kwargs.get('data'):
             self.data = kwargs.get('data')
-            #self.message = TextSendMessage(text=str(self.data))
-            self.message = TextSendMessage(text='投保人數：'+str(self.data['numOfPeople'])+'\n旅遊地區：'+str(self.data['region'])+'\n旅遊目的：'+str(self.data['purpose'])+'\n旅遊日期：'+str(self.data['startDate'])+' ~ '+str(self.data['endDate']))
+            self.message = TextSendMessage(text=str(json.dumps(self.data)))
+            #self.message = TextSendMessage(text='投保人數：'+str(self.data['numOfPeople'])+'\n旅遊地區：'+str(self.data['region'])+'\n旅遊目的：'+str(self.data['purpose'])+'\n旅遊日期：'+str(self.data['startDate'])+' ~ '+str(self.data['endDate']))
 
     def on_event(self, event):
         if event == 'finish':
