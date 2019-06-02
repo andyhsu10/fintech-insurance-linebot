@@ -87,7 +87,7 @@ def handle_postback(event):
         message = TextSendMessage(text=event.postback.params['date'])
         line_bot_api.reply_message(event.reply_token, message)
     elif event.postback.data == 'numOfPeople':
-        message = TextSendMessage(text=event.postback)
+        message = TextSendMessage(text=str(event.postback))
         line_bot_api.reply_message(event.reply_token, message)
 
 if __name__ == "__main__":
