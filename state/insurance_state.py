@@ -160,7 +160,12 @@ class EndDateState(State):
         return self
 
 class FinalState(State):
-    message = TextSendMessage(text='投保人數：'+str(self.data.numOfPeople)+'\n旅遊地區：'+str(self.data.region)+'\n旅遊目的：'+str(self.data.purpose)+'\n旅遊日期：'+str(self.data.startDate)+' ~ '+str(self.data.endDate))
+    def __init__(self, *args, **kwargs):
+        self.data = {}
+        if kwargs.get('data'):
+            self.data = kwargs.get('data')
+            self.message = TextSendMessage(text='投保人數：'+str(self.data.numOfPeople)+'\n旅遊地區：'+str(self.data.region)+'\n旅遊目的：'+str(self.data.purpose)+'\n旅遊日期：'+str(self.data.startDate)+' ~ '+str(self.data.endDate))
+
     def on_event(self, event):
         if event == 'finish':
             return self.data
