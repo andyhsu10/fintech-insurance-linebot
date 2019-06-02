@@ -53,7 +53,7 @@ def handle_message(event):
     global user_insurance
     if event.message.text == '開始使用':
         user_insurance[event.source.user_id] = InsuranceBot()
-        line_bot_api.reply_message(event.reply_token, insurance.msg)
+        line_bot_api.reply_message(event.reply_token, user_insurance[event.source.user_id].msg)
     else:
         message = TextSendMessage(text=event.message.text)
         line_bot_api.reply_message(event.reply_token, message)
