@@ -1,6 +1,6 @@
 from state.state import State
 from linebot.models import *
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import json
 
 region_dict = {
@@ -144,9 +144,9 @@ class StartDateState(State):
                         "label": "選擇出發日期",
                         "data": "startDate",
                         "mode": "date",
-                        "initial": datetime.now().strftime("%Y-%m-%d"),
-                        "max": (datetime.now() + timedelta(days=364)).strftime("%Y-%m-%d"),
-                        "min": datetime.now().strftime("%Y-%m-%d"),
+                        "initial": datetime.now().astimezone(timezone('Asia/Taipei')).strftime("%Y-%m-%d"),
+                        "max": (datetime.now().astimezone(timezone('Asia/Taipei')) + timedelta(days=364)).strftime("%Y-%m-%d"),
+                        "min": datetime.now().astimezone(timezone('Asia/Taipei')).strftime("%Y-%m-%d"),
                     }
                 ]
             )
@@ -176,9 +176,9 @@ class EndDateState(State):
                             "label": "選擇結束日期",
                             "data": "endDate",
                             "mode": "date",
-                            "initial": (datetime.strptime('2019-06-02', "%Y-%m-%d") + timedelta(days=1)).strftime("%Y-%m-%d"),
-                            "max":  (datetime.strptime('2019-06-02', "%Y-%m-%d") + timedelta(days=179)).strftime("%Y-%m-%d"),
-                            "min":  (datetime.strptime('2019-06-02', "%Y-%m-%d") + timedelta(days=1)).strftime("%Y-%m-%d"),
+                            "initial": (datetime.strptime(self.data['startDate'], "%Y-%m-%d") + timedelta(days=1)).strftime("%Y-%m-%d"),
+                            "max":  (datetime.strptime(self.data['startDate'], "%Y-%m-%d") + timedelta(days=179)).strftime("%Y-%m-%d"),
+                            "min":  (datetime.strptime(self.data['startDate'], "%Y-%m-%d") + timedelta(days=1)).strftime("%Y-%m-%d"),
                         }
                     ]
                 )
