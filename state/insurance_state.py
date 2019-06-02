@@ -4,18 +4,18 @@ from time import gmtime, strftime, localtime, time
 import json
 
 region_dict = {
-    "eastAsia_oceania" = "中日韓、紐澳", 
-    "southEastAsis" = "東南亞", 
-    "west" = "歐洲、美加", 
-    "middleEast" = "中東", 
-    "southAmerica" = "南美、南亞", 
-    "africa" = "非洲"
+    "eastAsia_oceania": "中日韓、紐澳", 
+    "southEastAsis": "東南亞", 
+    "west": "歐洲、美加", 
+    "middleEast": "中東", 
+    "southAmerica": "南美、南亞", 
+    "africa": "非洲"
 }
 
 purpose_dict = {
-    "travel" = "旅遊",
-    "business" = "出差",
-    "studyTour" = "遊學"
+    "travel": "旅遊",
+    "business": "出差",
+    "studyTour": "遊學"
 }
 
 class InitState(State):
