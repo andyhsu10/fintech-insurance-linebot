@@ -8,6 +8,7 @@ from linebot.exceptions import (
 )
 from linebot.models import *
 from time import gmtime, strftime, localtime, time
+from state.insurance_state import InitState
 import os
 
 app = Flask(__name__)
@@ -16,6 +17,20 @@ app = Flask(__name__)
 line_bot_api = LineBotApi(os.getenv('CHANNEL_ACCESS_TOKEN'))
 # Channel Secret
 handler = WebhookHandler(os.getenv('CHANNEL_SECRET'))
+
+insurance = None
+
+class InsuranceBot(object):
+    def __init__(self):
+        """ Initialize the components. """
+
+        # Start with a default state.
+        self.state = InitState()
+
+    def on_event(self, event):
+        # The next state will be the result of the on_event function.
+        self.state = self.state.on_event(event)
+        self.msg = self.state.message
 
 # 監聽所有來自 /callback 的 Post Request
 @app.route("/callback", methods=['POST'])
@@ -35,47 +50,9 @@ def callback():
 # 處理訊息
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    if event.message.text == '選擇日期':
-        message = TemplateSendMessage(
-            alt_text = '選擇日期',
-            template = ButtonsTemplate(
-                thumbnailImageUrl = 'https://familylivingtoday.com/wp-content/uploads/2018/09/beach-umbrella.jpg',
-                imageAspectRation = "rectangle",
-                imageSize = "cover",
-                title = '選擇日期',
-                text = '請選擇您出發的日期',
-                actions = [
-                    {
-                        "type": "datetimepicker",
-                        "label": "選擇出發日期",
-                        "data": "setOutDate",
-                        "mode": "date",
-                        "initial": strftime("%Y-%m-%d", gmtime()),
-                        "max": strftime("%Y-%m-%d", localtime(time() + 60*60*24*365)),
-                        "min": strftime("%Y-%m-%d", gmtime()),
-                    }
-                ]
-            )
-        )
-        line_bot_api.reply_message(event.reply_token, message)
-    elif event.message.text == '投保試算':
-        message = TextSendMessage(
-            text='請選擇投保人數',
-            quick_reply=QuickReply(
-                items=[
-                    QuickReplyButton(action=PostbackAction(label="1人", data="numOfPeople&1")),
-                    QuickReplyButton(action=PostbackAction(label="2人", data="numOfPeople&2")),
-                    QuickReplyButton(action=PostbackAction(label="3人", data="numOfPeople&3")),
-                    QuickReplyButton(action=PostbackAction(label="4人", data="numOfPeople&4")),
-                    QuickReplyButton(action=PostbackAction(label="5人", data="numOfPeople&5")),
-                    QuickReplyButton(action=PostbackAction(label="6人", data="numOfPeople&6")),
-                    QuickReplyButton(action=PostbackAction(label="7人", data="numOfPeople&7")),
-                    QuickReplyButton(action=PostbackAction(label="8人", data="numOfPeople&8")),
-                    QuickReplyButton(action=PostbackAction(label="9人", data="numOfPeople&9")),
-                    QuickReplyButton(action=PostbackAction(label="10人", data="numOfPeople&10"))
-                ]
-            ))
-        line_bot_api.reply_message(event.reply_token, message)
+    if event.message.text == '開始使用':
+        insurance = InsuranceBot()
+        line_bot_api.reply_message(event.reply_token, insurance.msg)
     else:
         message = TextSendMessage(text=event.message.text)
         line_bot_api.reply_message(event.reply_token, message)
@@ -83,12 +60,10 @@ def handle_message(event):
 # 處理User postback的資訊
 @handler.add(PostbackEvent)
 def handle_postback(event):
-    if event.postback.data == 'setOutDate':
-        message = TextSendMessage(text=event.postback.params['date'])
-        line_bot_api.reply_message(event.reply_token, message)
-    elif event.postback.data.split('&')[0] == 'numOfPeople':
-        message = TextSendMessage(text=event.postback.data.split('&')[1])
-        line_bot_api.reply_message(event.reply_token, message)
+    if event.postback.data.split('&')[0]:
+        insurance.on_event(event.postback.data.split('&')[0])
+        line_bot_api.reply_message(event.reply_token, insurance.msg)
+
 
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
