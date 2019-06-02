@@ -7,7 +7,6 @@ class State(object):
         self.data = {}
         if kwargs.get('data'):
             self.data = kwargs.get('data')
-        print('Current state: %s', str(self))
 
     def on_event(self, event):
         """

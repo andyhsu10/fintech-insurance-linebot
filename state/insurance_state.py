@@ -1,6 +1,6 @@
 from state.state import State
 from linebot.models import *
-from time import gmtime, strftime, localtime, time
+from datetime import datetime, timedelta
 import json
 
 region_dict = {
@@ -135,9 +135,9 @@ class StartDateState(State):
                         "label": "選擇出發日期",
                         "data": "startDate",
                         "mode": "date",
-                        "initial": strftime("%Y-%m-%d", gmtime()),
-                        "max": strftime("%Y-%m-%d", localtime(time() + 60*60*24*365)),
-                        "min": strftime("%Y-%m-%d", gmtime()),
+                        "initial": datetime.now().strftime("%Y-%m-%d"),
+                        "max": (datetime.now() + timedelta(days=364)).strftime("%Y-%m-%d"),
+                        "min": datetime.now().strftime("%Y-%m-%d"),
                     }
                 ]
             )
@@ -152,24 +152,28 @@ class StartDateState(State):
         return self
 
 class EndDateState(State):
-    message = TemplateSendMessage(
-            alt_text = '選擇結束日期',
-            template = ButtonsTemplate(
-                title = '選擇結束日期',
-                text = '請選擇您結束的日期',
-                actions = [
-                    {
-                        "type": "datetimepicker",
-                        "label": "選擇結束日期",
-                        "data": "endDate",
-                        "mode": "date",
-                        "initial": strftime("%Y-%m-%d", gmtime()),
-                        "max": strftime("%Y-%m-%d", localtime(time() + 60*60*24*365)),
-                        "min": strftime("%Y-%m-%d", gmtime()),
-                    }
-                ]
+    def __init__(self, *args, **kwargs):
+        self.data = {}
+        if kwargs.get('data'):
+            self.data = kwargs.get('data')
+            self.message = TemplateSendMessage(
+                alt_text = '選擇結束日期',
+                template = ButtonsTemplate(
+                    title = '選擇結束日期',
+                    text = '請選擇您結束的日期',
+                    actions = [
+                        {
+                            "type": "datetimepicker",
+                            "label": "選擇結束日期",
+                            "data": "endDate",
+                            "mode": "date",
+                            "initial": (datetime.strptime('2019-06-02', "%Y-%m-%d") + timedelta(days=1)).strftime("%Y-%m-%d"),
+                            "max":  (datetime.strptime('2019-06-02', "%Y-%m-%d") + timedelta(days=179)).strftime("%Y-%m-%d"),
+                            "min":  (datetime.strptime('2019-06-02', "%Y-%m-%d") + timedelta(days=1)).strftime("%Y-%m-%d"),
+                        }
+                    ]
+                )
             )
-        )
 
     def on_event(self, event, data):
         if event == 'endDate':
