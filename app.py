@@ -63,16 +63,16 @@ def handle_message(event):
             text='請選擇投保人數',
             quick_reply=QuickReply(
                 items=[
-                    QuickReplyButton(action=MessageAction(label="label1", text="1人")),
-                    QuickReplyButton(action=MessageAction(label="label2", text="2人")),
-                    QuickReplyButton(action=MessageAction(label="label3", text="3人")),
-                    QuickReplyButton(action=MessageAction(label="label4", text="4人")),
-                    QuickReplyButton(action=MessageAction(label="label5", text="5人")),
-                    QuickReplyButton(action=MessageAction(label="label6", text="6人")),
-                    QuickReplyButton(action=MessageAction(label="label7", text="7人")),
-                    QuickReplyButton(action=MessageAction(label="label8", text="8人")),
-                    QuickReplyButton(action=MessageAction(label="label9", text="9人")),
-                    QuickReplyButton(action=MessageAction(label="label10", text="10人"))
+                    QuickReplyButton(action=PostbackAction(label="1人", data="numOfPeople")),
+                    QuickReplyButton(action=PostbackAction(label="2人", data="numOfPeople")),
+                    QuickReplyButton(action=PostbackAction(label="3人", data="numOfPeople")),
+                    QuickReplyButton(action=PostbackAction(label="4人", data="numOfPeople")),
+                    QuickReplyButton(action=PostbackAction(label="5人", data="numOfPeople")),
+                    QuickReplyButton(action=PostbackAction(label="6人", data="numOfPeople")),
+                    QuickReplyButton(action=PostbackAction(label="7人", data="numOfPeople")),
+                    QuickReplyButton(action=PostbackAction(label="8人", data="numOfPeople")),
+                    QuickReplyButton(action=PostbackAction(label="9人", data="numOfPeople")),
+                    QuickReplyButton(action=PostbackAction(label="10人", data="numOfPeople0"))
                 ]
             ))
         line_bot_api.reply_message(event.reply_token, message)
@@ -85,6 +85,9 @@ def handle_message(event):
 def handle_postback(event):
     if event.postback.data == 'setOutDate':
         message = TextSendMessage(text=event.postback.params['date'])
+        line_bot_api.reply_message(event.reply_token, message)
+    elif event.postback.data == 'numOfPeople':
+        message = TextSendMessage(text=event.postback)
         line_bot_api.reply_message(event.reply_token, message)
 
 if __name__ == "__main__":
