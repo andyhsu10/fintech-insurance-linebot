@@ -63,7 +63,7 @@ def handle_message(event):
 def handle_postback(event):
     global insurance
     if event.postback.data.split('&')[0]:
-        if event.postback.data.split('&')[1]:
+        if len(event.postback.data.split('&')) > 1:
             insurance.on_event(event.postback.data.split('&')[0], event.postback.data.split('&')[1])
         else:
             insurance.on_event(event.postback.data.split('&')[0], event.postback.params)
