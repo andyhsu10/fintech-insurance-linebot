@@ -63,7 +63,10 @@ def handle_message(event):
 def handle_postback(event):
     global insurance
     if event.postback.data.split('&')[0]:
-        insurance.on_event(event.postback.data.split('&')[0], event.postback.params)
+        if event.postback.data.split('&')[1]:
+            insurance.on_event(event.postback.data.split('&')[0], event.postback.data.split('&')[1])
+        else:
+            insurance.on_event(event.postback.data.split('&')[0], event.postback.params)
         line_bot_api.reply_message(event.reply_token, insurance.msg)
 
 if __name__ == "__main__":
