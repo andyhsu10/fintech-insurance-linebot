@@ -18,6 +18,12 @@ purpose_dict = {
     "studyTour": "遊學"
 }
 
+flight_dict = {
+    "budgetAirline": "廉航",
+    "first_business": "頭等或商務艙",
+    "economy": "經濟艙"
+}
+
 class InitState(State):
     message = TemplateSendMessage(
             alt_text = '請問您需要什麼服務？',
@@ -181,9 +187,29 @@ class EndDateState(State):
     def on_event(self, event, data):
         if event == 'endDate':
             self.data[event] = data['date']
-            return FinalState(data=self.data)
+            return FlightState(data=self.data)
         elif event == 'back':
             return StartDateState(data=self.data)
+        return self
+
+class FlightState(State):
+    message = TextSendMessage(
+            text='請問您搭乘的是？',
+            quick_reply=QuickReply(
+                items=[
+                    QuickReplyButton(action=PostbackAction(label="廉航", data="flight&budgetAirline")),
+                    QuickReplyButton(action=PostbackAction(label="頭等或商務艙", data="flight&first_business")),
+                    QuickReplyButton(action=PostbackAction(label="經濟艙", data="flight&economy")),
+                    QuickReplyButton(action=PostbackAction(label="上一步", data="back"))
+                ]
+            ))
+
+    def on_event(self, event, data):
+        if event == 'flight':
+            self.data[event] = data
+            return FinalState(data=self.data)
+        elif event == 'back':
+            return EndDateState(data=self.data)
         return self
 
 class FinalState(State):
@@ -191,7 +217,7 @@ class FinalState(State):
         self.data = {}
         if kwargs.get('data'):
             self.data = kwargs.get('data')
-            self.message = TextSendMessage(text='以下是您輸入的資訊：\n人數：'+str(self.data['numOfPeople'])+'人\n地區：'+str(region_dict[self.data['region']])+'\n目的：'+str(purpose_dict[self.data['purpose']])+'\n日期：'+str(self.data['startDate'])+' ~ '+str(self.data['endDate']))
+            self.message = TextSendMessage(text='以下是您輸入的資訊：\n人數：'+str(self.data['numOfPeople'])+'人\n地區：'+str(region_dict[self.data['region']])+'\n目的：'+str(purpose_dict[self.data['purpose']])+'\n日期：'+str(self.data['startDate'])+' ~ '+str(self.data['endDate'])+'\n搭乘：'+str(self.data['flight']))
 
     def on_event(self, event):
         if event == 'finish':
