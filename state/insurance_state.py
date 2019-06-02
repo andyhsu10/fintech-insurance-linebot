@@ -70,7 +70,8 @@ class NumPeopleState(State):
                     QuickReplyButton(action=PostbackAction(label="7人", data="numOfPeople&7")),
                     QuickReplyButton(action=PostbackAction(label="8人", data="numOfPeople&8")),
                     QuickReplyButton(action=PostbackAction(label="9人", data="numOfPeople&9")),
-                    QuickReplyButton(action=PostbackAction(label="10人", data="numOfPeople&10"))
+                    QuickReplyButton(action=PostbackAction(label="10人", data="numOfPeople&10")),
+                    QuickReplyButton(action=PostbackAction(label="上一步", data="back"))
                 ]
             ))
 
@@ -92,7 +93,8 @@ class RegionState(State):
                     QuickReplyButton(action=PostbackAction(label="歐洲、美加", data="region&west")),
                     QuickReplyButton(action=PostbackAction(label="中東", data="region&middleEast")),
                     QuickReplyButton(action=PostbackAction(label="南美、南亞", data="region&southAmerica")),
-                    QuickReplyButton(action=PostbackAction(label="非洲", data="region&africa"))
+                    QuickReplyButton(action=PostbackAction(label="非洲", data="region&africa")),
+                    QuickReplyButton(action=PostbackAction(label="上一步", data="back"))
                 ]
             ))
     
@@ -111,7 +113,8 @@ class PurposeState(State):
                 items=[
                     QuickReplyButton(action=PostbackAction(label="旅遊", data="purpose&travel")),
                     QuickReplyButton(action=PostbackAction(label="出差", data="purpose&business")),
-                    QuickReplyButton(action=PostbackAction(label="遊學", data="purpose&studyTour"))
+                    QuickReplyButton(action=PostbackAction(label="遊學", data="purpose&studyTour")),
+                    QuickReplyButton(action=PostbackAction(label="上一步", data="back"))
                 ]
             ))
 
