@@ -4,10 +4,10 @@ from time import gmtime, strftime, localtime, time
 
 class InitState(State):
     message = TemplateSendMessage(
-            alt_text = '選擇出發日期',
+            alt_text = '請問您需要什麼服務？',
             template = ButtonsTemplate(
-                title = '選擇出發日期',
-                text = '請選擇您出發的日期',
+                title = '旅遊投保機器人',
+                text = '您好，歡迎使用台科旅遊投保機器人，請問您需要什麼服務呢？',
                 actions = [
                     {
                         "type":"postback",

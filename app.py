@@ -47,6 +47,13 @@ def callback():
         abort(400)
     return 'OK'
 
+# 處理User postback的資訊
+@handler.add(PostbackEvent)
+def handle_postback(event):
+    if event.postback.data.split('&')[0]:
+        insurance.on_event(event.postback.data.split('&')[0])
+        line_bot_api.reply_message(event.reply_token, insurance.msg)
+
 # 處理訊息
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
@@ -56,14 +63,6 @@ def handle_message(event):
     else:
         message = TextSendMessage(text=event.message.text)
         line_bot_api.reply_message(event.reply_token, message)
-
-# 處理User postback的資訊
-@handler.add(PostbackEvent)
-def handle_postback(event):
-    if event.postback.data.split('&')[0]:
-        insurance.on_event(event.postback.data.split('&')[0])
-        line_bot_api.reply_message(event.reply_token, insurance.msg)
-
 
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
