@@ -6,6 +6,7 @@ class InitState(State):
     message = TemplateSendMessage(
             alt_text = '請問您需要什麼服務？',
             template = ButtonsTemplate(
+                type = "buttons",
                 title = '旅遊投保機器人',
                 text = '您好，歡迎使用台科旅遊投保機器人，請問您需要什麼服務呢？',
                 actions = [
@@ -13,19 +14,16 @@ class InitState(State):
                         "type":"postback",
                         "label":"投保試算",
                         "data":"calculate",
-                        "text":"投保試算"
                     },
                     {
                         "type":"postback",
                         "label":"投保問題",
                         "data":"insurance_qa",
-                        "text":"投保問題"
                     },
                     {
                         "type":"postback",
                         "label":"理賠問題",
                         "data":"claim_qa",
-                        "text":"理賠問題"
                     },
                 ]
             )
