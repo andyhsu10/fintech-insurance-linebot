@@ -87,9 +87,9 @@ class PurposeState(State):
             text='請選擇旅遊目的',
             quick_reply=QuickReply(
                 items=[
-                    QuickReplyButton(action=PostbackAction(label="旅遊", data="purpost&travel")),
-                    QuickReplyButton(action=PostbackAction(label="出差", data="purpost&business")),
-                    QuickReplyButton(action=PostbackAction(label="遊學", data="purpost&studyTour"))
+                    QuickReplyButton(action=PostbackAction(label="旅遊", data="purpose&travel")),
+                    QuickReplyButton(action=PostbackAction(label="出差", data="purpose&business")),
+                    QuickReplyButton(action=PostbackAction(label="遊學", data="purpose&studyTour"))
                 ]
             ))
 
