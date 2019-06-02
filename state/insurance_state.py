@@ -124,7 +124,7 @@ class StartDateState(State):
     
     def on_event(self, event, data):
         if event == 'startDate':
-            self.data[event] = data
+            self.data[event] = data['date']
             return EndDateState(data=self.data)
         elif event == 'back':
             return PurposeState(data=self.data)
@@ -152,7 +152,7 @@ class EndDateState(State):
 
     def on_event(self, event, data):
         if event == 'endDate':
-            self.data[event] = data
+            self.data[event] = data['date']
             return FinalState(data=self.data)
         elif event == 'back':
             return StartDateState(data=self.data)
