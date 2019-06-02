@@ -66,7 +66,7 @@ def handle_postback(event):
         if len(event.postback.data.split('&')) > 1:
             insurance.on_event(event.postback.data.split('&')[0], event.postback.data.split('&')[1])
         else:
-            insurance.on_event(event.postback.data.split('&')[0], event.postback.params)
+            insurance.on_event(event.postback.data.split('&')[0], next(iter(event.postback.params.values())))
         line_bot_api.reply_message(event.reply_token, insurance.msg)
 
 if __name__ == "__main__":
