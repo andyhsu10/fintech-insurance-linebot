@@ -58,6 +58,22 @@ def handle_message(event):
             )
         )
         line_bot_api.reply_message(event.reply_token, message)
+    elif event.message.text == '投保試算':
+        message = TextSendMessage(
+            text='請選擇投保人數',
+            quick_reply=QuickReply(
+                items=[
+                    QuickReplyButton(action=MessageAction(label="label1", text="1人")),
+                    QuickReplyButton(action=MessageAction(label="label2", text="2人")),
+                    QuickReplyButton(action=MessageAction(label="label3", text="3人")),
+                    QuickReplyButton(action=MessageAction(label="label4", text="4人")),
+                    QuickReplyButton(action=MessageAction(label="label5", text="5人")),
+                    QuickReplyButton(action=MessageAction(label="label6", text="6人")),
+                    QuickReplyButton(action=MessageAction(label="label7", text="7人")),
+                    QuickReplyButton(action=MessageAction(label="label8", text="8人")),
+                    QuickReplyButton(action=MessageAction(label="label9", text="9人")),
+                    QuickReplyButton(action=MessageAction(label="label10", text="10人"))
+                ]))
     else:
         message = TextSendMessage(text=event.message.text)
         line_bot_api.reply_message(event.reply_token, message)
