@@ -29,7 +29,7 @@ class InitState(State):
             )
         )
     
-    def on_event(self, event):
+    def on_event(self, event, data):
         if event == 'calculate':
             return NumPeopleState()
         return self
