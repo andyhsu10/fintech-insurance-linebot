@@ -17,7 +17,7 @@ line_bot_api = LineBotApi(os.getenv('CHANNEL_ACCESS_TOKEN'))
 # Channel Secret
 handler = WebhookHandler(os.getenv('CHANNEL_SECRET'))
 
-insurance = None
+user_insurance = {}
 
 class InsuranceBot(object):
     def __init__(self):
@@ -50,9 +50,9 @@ def callback():
 # 處理訊息
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    global insurance
+    global user_insurance
     if event.message.text == '開始使用':
-        insurance = InsuranceBot()
+        user_insurance[event.source.user_id] = InsuranceBot()
         line_bot_api.reply_message(event.reply_token, insurance.msg)
     else:
         message = TextSendMessage(text=event.message.text)
@@ -61,13 +61,13 @@ def handle_message(event):
 # 處理User postback的資訊
 @handler.add(PostbackEvent)
 def handle_postback(event):
-    global insurance
+    global user_insurance
     if event.postback.data.split('&')[0]:
         if len(event.postback.data.split('&')) > 1:
-            insurance.on_event(event.postback.data.split('&')[0], event.postback.data.split('&')[1])
+            user_insurance[event.source.user_id].on_event(event.postback.data.split('&')[0], event.postback.data.split('&')[1])
         else:
-            insurance.on_event(event.postback.data.split('&')[0], event.postback.params)
-        line_bot_api.reply_message(event.reply_token, insurance.msg)
+            user_insurance[event.source.user_id].on_event(event.postback.data.split('&')[0], event.postback.params)
+        line_bot_api.reply_message(event.reply_token, user_insurance[event.source.user_id].msg)
 
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
