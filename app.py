@@ -55,8 +55,8 @@ def handle_message(event):
         user_insurance[event.source.user_id] = InsuranceBot()
         line_bot_api.reply_message(event.reply_token, user_insurance[event.source.user_id].msg)
     else:
-        message = TextSendMessage(text=event.message.text)
-        line_bot_api.reply_message(event.reply_token, message)
+        user_insurance[event.source.user_id].on_event('msg', event.message.text)
+        line_bot_api.reply_message(event.reply_token, user_insurance[event.source.user_id].msg)
 
 # 處理User postback的資訊
 @handler.add(PostbackEvent)

@@ -3,6 +3,7 @@ from linebot.models import *
 from datetime import datetime, timedelta, timezone
 import json
 
+region_list = ["中日韓、紐澳", "東南亞", "歐洲、美加", "中東", "南美、南亞", "非洲"]
 region_dict = {
     "eastAsia_oceania": "中日韓、紐澳", 
     "southEastAsis": "東南亞", 
@@ -12,12 +13,14 @@ region_dict = {
     "africa": "非洲"
 }
 
+purpose_list = ["旅遊", "出差", "遊學"]
 purpose_dict = {
     "travel": "旅遊",
     "business": "出差",
     "studyTour": "遊學"
 }
 
+flight_list = ["廉航", "頭等或商務艙", "經濟艙"]
 flight_dict = {
     "budgetAirline": "廉航",
     "first_business": "頭等或商務艙",
@@ -64,72 +67,76 @@ class InitState(State):
 
 class NumPeopleState(State):
     message = TextSendMessage(
-            text='請選擇投保人數',
+            text='請問有多少人要投保呢？ (1~10人)',
             quick_reply=QuickReply(
                 items=[
-                    QuickReplyButton(action=PostbackAction(label="1人", data="numOfPeople&1")),
-                    QuickReplyButton(action=PostbackAction(label="2人", data="numOfPeople&2")),
-                    QuickReplyButton(action=PostbackAction(label="3人", data="numOfPeople&3")),
-                    QuickReplyButton(action=PostbackAction(label="4人", data="numOfPeople&4")),
-                    QuickReplyButton(action=PostbackAction(label="5人", data="numOfPeople&5")),
-                    QuickReplyButton(action=PostbackAction(label="6人", data="numOfPeople&6")),
-                    QuickReplyButton(action=PostbackAction(label="7人", data="numOfPeople&7")),
-                    QuickReplyButton(action=PostbackAction(label="8人", data="numOfPeople&8")),
-                    QuickReplyButton(action=PostbackAction(label="9人", data="numOfPeople&9")),
-                    QuickReplyButton(action=PostbackAction(label="10人", data="numOfPeople&10")),
-                    QuickReplyButton(action=PostbackAction(label="上一步", data="back"))
+                    QuickReplyButton(action=MessageAction(label="1人", text="1人")),
+                    QuickReplyButton(action=MessageAction(label="2人", text="2人")),
+                    QuickReplyButton(action=MessageAction(label="3人", text="3人")),
+                    QuickReplyButton(action=MessageAction(label="4人", text="4人")),
+                    QuickReplyButton(action=MessageAction(label="5人", text="5人")),
+                    QuickReplyButton(action=MessageAction(label="6人", text="6人")),
+                    QuickReplyButton(action=MessageAction(label="7人", text="7人")),
+                    QuickReplyButton(action=MessageAction(label="8人", text="8人")),
+                    QuickReplyButton(action=MessageAction(label="9人", text="9人")),
+                    QuickReplyButton(action=MessageAction(label="10人", text="10人")),
+                    QuickReplyButton(action=MessageAction(label="上一步", text="上一步"))
                 ]
             ))
 
     def on_event(self, event, data):
-        if event == 'numOfPeople':
-            self.data[event] = data
-            return RegionState(data=self.data)
-        elif event == 'back':
-            return InitState()
+        if event == 'msg':
+            num = int(data.split('人')[0])
+            if num >= 1 or num <= 10:
+                self.data['numOfPeople'] = num
+                return RegionState(data=self.data)
+            if data == '上一步':
+                return InitState()
         return self
 
 class RegionState(State):
     message = TextSendMessage(
-            text='請選擇旅遊地區',
+            text='請問您要去哪裡呢？',
             quick_reply=QuickReply(
                 items=[
-                    QuickReplyButton(action=PostbackAction(label="中日韓、紐澳", data="region&eastAsia_oceania")),
-                    QuickReplyButton(action=PostbackAction(label="東南亞", data="region&southEastAsis")),
-                    QuickReplyButton(action=PostbackAction(label="歐洲、美加", data="region&west")),
-                    QuickReplyButton(action=PostbackAction(label="中東", data="region&middleEast")),
-                    QuickReplyButton(action=PostbackAction(label="南美、南亞", data="region&southAmerica")),
-                    QuickReplyButton(action=PostbackAction(label="非洲", data="region&africa")),
-                    QuickReplyButton(action=PostbackAction(label="上一步", data="back"))
+                    QuickReplyButton(action=MessageAction(label="中日韓、紐澳", text="中日韓、紐澳")),
+                    QuickReplyButton(action=MessageAction(label="東南亞", text="東南亞")),
+                    QuickReplyButton(action=MessageAction(label="歐洲、美加", text="歐洲、美加")),
+                    QuickReplyButton(action=MessageAction(label="中東", text="中東")),
+                    QuickReplyButton(action=MessageAction(label="南美、南亞", text="南美、南亞")),
+                    QuickReplyButton(action=MessageAction(label="非洲", text="非洲")),
+                    QuickReplyButton(action=MessageAction(label="上一步", text="上一步"))
                 ]
             ))
     
     def on_event(self, event, data):
-        if event == 'region':
-            self.data[event] = data
-            return PurposeState(data=self.data)
-        elif event == 'back':
-            return NumPeopleState(data=self.data)
+        if event == 'msg':
+            if data in region_list:
+                self.data['region'] = data
+                return PurposeState(data=self.data)
+            if data == '上一步':
+                return NumPeopleState(data=self.data)
         return self
 
 class PurposeState(State):
     message = TextSendMessage(
-            text='請選擇旅遊目的',
+            text='請問您這趟行程的目的是？',
             quick_reply=QuickReply(
                 items=[
-                    QuickReplyButton(action=PostbackAction(label="旅遊", data="purpose&travel")),
-                    QuickReplyButton(action=PostbackAction(label="出差", data="purpose&business")),
-                    QuickReplyButton(action=PostbackAction(label="遊學", data="purpose&studyTour")),
-                    QuickReplyButton(action=PostbackAction(label="上一步", data="back"))
+                    QuickReplyButton(action=PostbackAction(label="旅遊", text="旅遊")),
+                    QuickReplyButton(action=PostbackAction(label="出差", text="出差")),
+                    QuickReplyButton(action=PostbackAction(label="遊學", text="遊學")),
+                    QuickReplyButton(action=PostbackAction(label="上一步", text="上一步"))
                 ]
             ))
 
     def on_event(self, event, data):
-        if event == 'purpose':
-            self.data[event] = data
-            return StartDateState(data=self.data)
-        elif event == 'back':
-            return RegionState(data=self.data)
+        if event == 'msg':
+            if data in purpose_list:
+                self.data['purpose'] = data
+                return StartDateState(data=self.data)
+            if data == '上一步':
+                return RegionState(data=self.data)
         return self
 
 class StartDateState(State):
@@ -197,19 +204,20 @@ class FlightState(State):
             text='請問您搭乘的是？',
             quick_reply=QuickReply(
                 items=[
-                    QuickReplyButton(action=PostbackAction(label="廉航", data="flight&budgetAirline")),
-                    QuickReplyButton(action=PostbackAction(label="頭等或商務艙", data="flight&first_business")),
-                    QuickReplyButton(action=PostbackAction(label="經濟艙", data="flight&economy")),
-                    QuickReplyButton(action=PostbackAction(label="上一步", data="back"))
+                    QuickReplyButton(action=MessageAction(label="廉航", text="廉航")),
+                    QuickReplyButton(action=MessageAction(label="頭等或商務艙", text="頭等或商務艙")),
+                    QuickReplyButton(action=MessageAction(label="經濟艙", text="經濟艙")),
+                    QuickReplyButton(action=MessageAction(label="上一步", text="上一步"))
                 ]
             ))
 
     def on_event(self, event, data):
-        if event == 'flight':
-            self.data[event] = data
-            return FinalState(data=self.data)
-        elif event == 'back':
-            return EndDateState(data=self.data)
+        if event == 'msg':
+            if data in flight_list:
+                self.data['flight'] = data
+                return FinalState(data=self.data)
+            if data == '上一步':
+                return EndDateState(data=self.data)
         return self
 
 class FinalState(State):
@@ -217,7 +225,7 @@ class FinalState(State):
         self.data = {}
         if kwargs.get('data'):
             self.data = kwargs.get('data')
-            self.message = TextSendMessage(text='以下是您輸入的資訊：\n人數：'+str(self.data['numOfPeople'])+'人\n地區：'+str(region_dict[self.data['region']])+'\n目的：'+str(purpose_dict[self.data['purpose']])+'\n日期：'+str(self.data['startDate'])+' ~ '+str(self.data['endDate'])+'\n搭乘：'+str(flight_dict[self.data['flight']]))
+            self.message = TextSendMessage(text='以下是您輸入的資訊：\n人數：'+str(self.data['numOfPeople'])+'人\n地區：'+str(self.data['region'])+'\n目的：'+str(self.data['purpose'])+'\n日期：'+str(self.data['startDate'])+' ~ '+str(self.data['endDate'])+'\n搭乘：'+str(self.data['flight']))
 
     def on_event(self, event):
         if event == 'finish':
