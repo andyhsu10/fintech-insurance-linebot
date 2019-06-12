@@ -225,7 +225,7 @@ class FinalState(State):
         self.data = {}
         if kwargs.get('data'):
             self.data = kwargs.get('data')
-            self.message = TextSendMessage(text='以下是您輸入的資訊：\n人數：'+str(self.data['numOfPeople'])+'人\n地區：'+str(self.data['region'])+'\n目的：'+str(self.data['purpose'])+'\n日期：'+str(self.data['startDate'])+' ~ '+str(self.data['endDate'])+'\n搭乘：'+str(self.data['flight']))
+            self.message = TextSendMessage(text='以下是您輸入的資訊：\n人數：'+str(self.data['numOfPeople'])+'人\n地區：'+str(self.data['region'])+'\n目的：'+str(self.data['purpose'])+'\n日期：'+str(self.data['startDate'])+' ~ '+str(self.data['endDate'])+' (共'+str((datetime.strptime(self.data['startDate'], "%Y-%m-%d")-datetime.strptime(self.data['endDate'], "%Y-%m-%d")).days+1)+'天)\n搭乘：'+str(self.data['flight']))
 
     def on_event(self, event):
         if event == 'finish':
