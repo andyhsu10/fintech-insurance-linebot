@@ -263,7 +263,7 @@ class ResultState(State):
                 self.data['select_detail_item'] = data
                 self.data['detail_items'] = self.data_detail_items
                 return DetailState(data=self.data)
-            else:
+            elif data == '不用了，謝謝！':
                 return FinalState(data=self.data)
         return self
 
@@ -293,9 +293,14 @@ class DetailState(State):
             if data in self.data['detail_items']:
                 self.data['select_detail_item'] = data
                 return DetailState(data=self.data)
-            else:
+            elif data == '不用了，謝謝！':
                 return FinalState(data=self.data)
         return self
 
 class FinalState(State):
     message = TextSendMessage(text='感謝您使用本服務，期待很快能再次為您服務，祝您旅途愉快！！')
+
+    def __init__(self, *args, **kwargs):
+        self.data = {}
+        if kwargs.get('data'):
+            self.data = kwargs.get('data')
