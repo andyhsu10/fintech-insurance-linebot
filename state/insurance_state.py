@@ -5,28 +5,8 @@ import pandas as pd
 import json
 
 region_list = ["中日韓、紐澳", "東南亞", "歐洲、美加", "中東", "南美、南亞", "非洲"]
-region_dict = {
-    "eastAsia_oceania": "中日韓、紐澳", 
-    "southEastAsis": "東南亞", 
-    "west": "歐洲、美加", 
-    "middleEast": "中東", 
-    "southAmerica": "南美、南亞", 
-    "africa": "非洲"
-}
-
 purpose_list = ["旅遊", "出差", "遊學"]
-purpose_dict = {
-    "travel": "旅遊",
-    "business": "出差",
-    "studyTour": "遊學"
-}
-
 flight_list = ["廉航", "頭等或商務艙", "經濟艙"]
-flight_dict = {
-    "budgetAirline": "廉航",
-    "first_business": "頭等或商務艙",
-    "economy": "經濟艙"
-}
 
 class InitState(State):
     message = TemplateSendMessage(
@@ -240,7 +220,9 @@ class ResultState(State):
         if kwargs.get('data'):
             self.data = kwargs.get('data')
             data = pd.read_csv('insurance.csv', header=0)
-            if self.data['numOfDays'] >= 1 and self.data['numOfDays'] < 10:
+            if self.data['purpose'] == '遊學':
+                days = '30~280'
+            elif self.data['numOfDays'] >= 1 and self.data['numOfDays'] < 10:
                 days = '1~10'
             elif self.data['numOfDays'] >= 10 and self.data['numOfDays'] < 30:
                 days = '10~30'
@@ -258,7 +240,7 @@ class ResultState(State):
             text = '以下是推薦的保單內容：\n總保費：'+str(fee)+'元\n'+text
             self.message = TextSendMessage(text=text)
 
-    def on_event(self, event):
+    def on_event(self, event, data):
         if event == 'msg':
             return InitState()
         return self
