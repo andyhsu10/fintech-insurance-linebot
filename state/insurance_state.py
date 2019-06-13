@@ -263,7 +263,7 @@ class ResultState(State):
                 self.data['select_detail_item'] = data
                 self.data['detail_items'] = self.data_detail_items
                 return DetailState(data=self.data)
-            elif data == '不用了，謝謝！':
+            else:
                 return FinalState()
         return self
 
@@ -272,40 +272,29 @@ class DetailState(State):
         self.data = {}
         if kwargs.get('data'):
             self.data = kwargs.get('data')
+            detail_data = pd.read_csv('insurance_datail.csv', header=0)
+            selection = detail_data.loc[(detail_data['Type'].str.contains(self.data['select_detail_item'])), 'Type':'Detail']
+
             detail_items = [QuickReplyButton(action=MessageAction(label="不用了，謝謝！", text="不用了，謝謝！"))]
             for val in self.data['detail_items']:
                 detail_items.append(QuickReplyButton(action=MessageAction(label=str(val), text=str(val))))
-            if self.data['select_detail_item'] in self.data['detail_items']:
-                detail_data = pd.read_csv('insurance_datail.csv', header=0)
-                selection = detail_data.loc[(detail_data['Type'].str.contains(self.data['select_detail_item'])), 'Type':'Detail']
-
-                self.message = [
-                    TextSendMessage(text=str(selection['Type'].values[0])+'\n\n'+str(selection['Detail'].values[0])),
-                    TextSendMessage(
-                        text='您還有什麼想要了解的內容嗎？',
-                        quick_reply=QuickReply(
-                            items=detail_items
-                        )
+            self.message = [
+                TextSendMessage(text=str(selection['Type'].values[0])+'\n\n'+str(selection['Detail'].values[0])),
+                TextSendMessage(
+                    text='您還有什麼想要了解的內容嗎？',
+                    quick_reply=QuickReply(
+                        items=detail_items
                     )
-                ]
-            else:
-                self.message = [
-                    TextSendMessage(
-                        text='您還有什麼想要了解的內容嗎？',
-                        quick_reply=QuickReply(
-                            items=detail_items
-                        )
-                    )
-                ]
+                )
+            ]
 
     def on_event(self, event, data):
         if event == 'msg':
             if data in self.data['detail_items']:
                 self.data['select_detail_item'] = data
                 return DetailState(data=self.data)
-            elif data == '不用了，謝謝！':
+            else:
                 return FinalState()
-        self.data['select_detail_item'] = data
         return self
 
 class FinalState(State):
