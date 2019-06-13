@@ -87,7 +87,6 @@ class RegionState(State):
                     QuickReplyButton(action=MessageAction(label="歐洲、美加", text="歐洲、美加")),
                     QuickReplyButton(action=MessageAction(label="中東", text="中東")),
                     QuickReplyButton(action=MessageAction(label="南美、南亞", text="南美、南亞")),
-                    QuickReplyButton(action=MessageAction(label="非洲", text="非洲")),
                     QuickReplyButton(action=MessageAction(label="上一步", text="上一步")),
                     QuickReplyButton(action=MessageAction(label="取消", text="取消"))
                 ]
