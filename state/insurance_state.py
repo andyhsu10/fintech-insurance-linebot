@@ -232,7 +232,7 @@ class ResultState(State):
             header = list(selection)
             text = ''
             for i in range(len(header)-1):
-                if selection[header[i]].values[0]:
+                if selection[header[i]].values[0] and str(selection[header[i]].values[0]) != 'nan':
                     text += str(header[i])+'：'+str(selection[header[i]].values[0])+'\n'
 
             fee = selection['總保費'].values[0] * self.data['numOfPeople']
