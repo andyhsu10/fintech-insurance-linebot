@@ -8,7 +8,7 @@ class State(object):
         if kwargs.get('data'):
             self.data = kwargs.get('data')
 
-    def on_event(self, event):
+    def on_event(self, event, data):
         """
         Handle events that are delegated to this State.
         """
