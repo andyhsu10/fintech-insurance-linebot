@@ -69,12 +69,12 @@ class NumPeopleState(State):
 
     def on_event(self, event, data):
         if event == 'msg':
+            if data == '上一步' or data == '取消':
+                return InitState()
             num = int(data.split('人')[0])
             if num >= 1 or num <= 10:
                 self.data['numOfPeople'] = num
                 return RegionState(data=self.data)
-            if data == '上一步' or data == '取消':
-                return InitState()
         return self
 
 class RegionState(State):
