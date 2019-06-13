@@ -1,6 +1,7 @@
 from state.state import State
 from linebot.models import *
 from datetime import datetime, timedelta, timezone
+import pandas as pd
 import json
 
 region_list = ["中日韓、紐澳", "東南亞", "歐洲、美加", "中東", "南美、南亞", "非洲"]
@@ -143,7 +144,7 @@ class StartDateState(State):
     message = TemplateSendMessage(
             alt_text = '選擇出發日期',
             template = ButtonsTemplate(
-                title = '選擇出發日期',
+                title = '出發日期',
                 text = '請選擇您出發的日期',
                 actions = [
                     {
@@ -175,7 +176,7 @@ class EndDateState(State):
             self.message = TemplateSendMessage(
                 alt_text = '選擇結束日期',
                 template = ButtonsTemplate(
-                    title = '選擇結束日期',
+                    title = '結束日期',
                     text = '請選擇您結束的日期',
                     actions = [
                         {
@@ -194,6 +195,7 @@ class EndDateState(State):
     def on_event(self, event, data):
         if event == 'endDate':
             self.data[event] = data['date']
+            self.data['numOfDays'] = (datetime.strptime(self.data['endDate'], "%Y-%m-%d")-datetime.strptime(self.data['startDate'], "%Y-%m-%d")).days+1
             return FlightState(data=self.data)
         elif event == 'back':
             return StartDateState(data=self.data)
@@ -215,19 +217,49 @@ class FlightState(State):
         if event == 'msg':
             if data in flight_list:
                 self.data['flight'] = data
-                return FinalState(data=self.data)
+                return ConfirmState(data=self.data)
             if data == '上一步':
                 return EndDateState(data=self.data)
         return self
 
-class FinalState(State):
+class ConfirmState(State):
     def __init__(self, *args, **kwargs):
         self.data = {}
         if kwargs.get('data'):
             self.data = kwargs.get('data')
-            self.message = TextSendMessage(text='以下是您輸入的資訊：\n人數：'+str(self.data['numOfPeople'])+'人\n地區：'+str(self.data['region'])+'\n目的：'+str(self.data['purpose'])+'\n日期：'+str(self.data['startDate'])+' ~ '+str(self.data['endDate'])+' (共'+str((datetime.strptime(self.data['endDate'], "%Y-%m-%d")-datetime.strptime(self.data['startDate'], "%Y-%m-%d")).days+1)+'天)\n搭乘：'+str(self.data['flight']))
+            self.message = TextSendMessage(text='以下是您輸入的資訊：\n人數：'+str(self.data['numOfPeople'])+'人\n地區：'+str(self.data['region'])+'\n目的：'+str(self.data['purpose'])+'\n日期：'+str(self.data['startDate'])+' ~ '+str(self.data['endDate'])+' (共'+str(self.data['numOfDays'])+'天)\n搭乘：'+str(self.data['flight']))
 
     def on_event(self, event):
-        if event == 'finish':
-            return self.data
+        if event == 'msg':
+            return ResultState(data=self.data)
         return self
+
+class ResultState(State):
+    def __init__(self, *args, **kwargs):
+        self.data = {}
+        if kwargs.get('data'):
+            self.data = kwargs.get('data')
+            data = pd.read_csv('insurance.csv', header=0)
+            if self.data['numOfDays'] >= 1 and self.data['numOfDays'] < 10:
+                days = '1~10'
+            elif self.data['numOfDays'] >= 10 and self.data['numOfDays'] < 30:
+                days = '10~30'
+            else:
+                days = '30~280'
+            selection = data.loc[(data['Region'] == self.data['region']) & (data['Purpose'] == self.data['purpose']) & (data['Days'] == days) & (data['Flight'] == self.data['flight']), '旅平險':'總保費']
+            header = list(selection)
+            text = ''
+            for i in range(len(header)-1):
+                if selection[header[i]].values[0]:
+                    text += header[i]+'：'+selection[header[i]].values[0]+'\n'
+
+            fee = selection['總保費'].values[0] * self.data['numOfPeople']
+
+            text = '以下是推薦的保單內容：\n總保費：'+str(fee)+'元\n'+text
+            self.message = TextSendMessage(text=text)
+
+    def on_event(self, event):
+        if event == 'msg':
+            return InitState()
+        return self
+            
