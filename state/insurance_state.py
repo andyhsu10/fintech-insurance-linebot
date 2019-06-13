@@ -216,6 +216,7 @@ class ConfirmState(State):
 
 class ResultState(State):
     def __init__(self, *args, **kwargs):
+        self.type = 'NoneReply'
         self.data = {}
         if kwargs.get('data'):
             self.data = kwargs.get('data')
