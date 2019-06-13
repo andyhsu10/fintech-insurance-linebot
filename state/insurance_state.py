@@ -220,7 +220,7 @@ class ResultState(State):
         if kwargs.get('data'):
             self.data = kwargs.get('data')
             detail_items = [QuickReplyButton(action=MessageAction(label="不用了，謝謝！", text="不用了，謝謝！"))]
-            data_detail_items = []
+            self.data_detail_items = []
 
             data = pd.read_csv('insurance.csv', header=0)
             if self.data['purpose'] == '遊學':
