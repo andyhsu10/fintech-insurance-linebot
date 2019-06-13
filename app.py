@@ -77,6 +77,13 @@ def handle_postback(event):
         user_insurance[event.source.user_id].on_event('msg', 'NoneReply')
         line_bot_api.reply_message(event.reply_token, user_insurance[event.source.user_id].msg)
 
+@handler.add(MessageEvent, message=StickerMessage)
+def handle_sticker_message(event):
+    global user_insurance
+    if not event.source.user_id in user_insurance or (event.message.sticker_id and not user_insurance[event.source.user_id].state.data):
+        user_insurance[event.source.user_id] = InsuranceBot()
+        line_bot_api.reply_message(event.reply_token, user_insurance[event.source.user_id].msg)
+
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
