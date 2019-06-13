@@ -305,6 +305,7 @@ class DetailState(State):
                 return DetailState(data=self.data)
             elif data == '不用了，謝謝！':
                 return FinalState()
+        self.data['select_detail_item'] = data
         return self
 
 class FinalState(State):
