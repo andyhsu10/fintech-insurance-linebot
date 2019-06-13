@@ -24,17 +24,17 @@ class InitState(State):
                     {
                         "type":"uri",
                         "label":"投保問題",
-                        "uri":"https://www.ntust.edu.tw/home.php",
+                        "uri":"https://www.fubon.com/insurance/b2c/content/travel_coverage/index.html",
                         "altUri": {
-                            "desktop": "https://www.ntust.edu.tw/home.php"
+                            "desktop": "https://www.fubon.com/insurance/b2c/content/travel_coverage/index.html"
                         }
                     },
                     {
                         "type":"uri",
                         "label":"理賠問題",
-                        "uri":"https://www.cs.ntust.edu.tw/index.php/zh/",
+                        "uri":"https://www.fubon.com/insurance/b2c/content/travel_coverage/index.html",
                         "altUri": {
-                            "desktop": "https://www.cs.ntust.edu.tw/index.php/zh/"
+                            "desktop": "https://www.fubon.com/insurance/b2c/content/travel_coverage/index.html"
                         }
                     },
                 ]
@@ -61,7 +61,8 @@ class NumPeopleState(State):
                     QuickReplyButton(action=MessageAction(label="8人", text="8人")),
                     QuickReplyButton(action=MessageAction(label="9人", text="9人")),
                     QuickReplyButton(action=MessageAction(label="10人", text="10人")),
-                    QuickReplyButton(action=MessageAction(label="上一步", text="上一步"))
+                    QuickReplyButton(action=MessageAction(label="上一步", text="上一步")),
+                    QuickReplyButton(action=MessageAction(label="取消", text="取消"))
                 ]
             ))
 
@@ -71,7 +72,7 @@ class NumPeopleState(State):
             if num >= 1 or num <= 10:
                 self.data['numOfPeople'] = num
                 return RegionState(data=self.data)
-            if data == '上一步':
+            if data == '上一步' or data == '取消':
                 return InitState()
         return self
 
@@ -86,7 +87,8 @@ class RegionState(State):
                     QuickReplyButton(action=MessageAction(label="中東", text="中東")),
                     QuickReplyButton(action=MessageAction(label="南美、南亞", text="南美、南亞")),
                     QuickReplyButton(action=MessageAction(label="非洲", text="非洲")),
-                    QuickReplyButton(action=MessageAction(label="上一步", text="上一步"))
+                    QuickReplyButton(action=MessageAction(label="上一步", text="上一步")),
+                    QuickReplyButton(action=MessageAction(label="取消", text="取消"))
                 ]
             ))
     
@@ -97,6 +99,8 @@ class RegionState(State):
                 return PurposeState(data=self.data)
             if data == '上一步':
                 return NumPeopleState(data=self.data)
+            elif data == '取消':
+                return InitState()
         return self
 
 class PurposeState(State):
@@ -107,7 +111,8 @@ class PurposeState(State):
                     QuickReplyButton(action=MessageAction(label="旅遊", text="旅遊")),
                     QuickReplyButton(action=MessageAction(label="出差", text="出差")),
                     QuickReplyButton(action=MessageAction(label="遊學", text="遊學")),
-                    QuickReplyButton(action=MessageAction(label="上一步", text="上一步"))
+                    QuickReplyButton(action=MessageAction(label="上一步", text="上一步")),
+                    QuickReplyButton(action=MessageAction(label="取消", text="取消"))
                 ]
             ))
 
@@ -118,6 +123,8 @@ class PurposeState(State):
                 return StartDateState(data=self.data)
             if data == '上一步':
                 return RegionState(data=self.data)
+            elif data == '取消':
+                return InitState()
         return self
 
 class StartDateState(State):
@@ -189,7 +196,8 @@ class FlightState(State):
                     QuickReplyButton(action=MessageAction(label="廉航", text="廉航")),
                     QuickReplyButton(action=MessageAction(label="頭等或商務艙", text="頭等或商務艙")),
                     QuickReplyButton(action=MessageAction(label="經濟艙", text="經濟艙")),
-                    QuickReplyButton(action=MessageAction(label="上一步", text="上一步"))
+                    QuickReplyButton(action=MessageAction(label="上一步", text="上一步")),
+                    QuickReplyButton(action=MessageAction(label="取消", text="取消"))
                 ]
             ))
 
@@ -200,6 +208,8 @@ class FlightState(State):
                 return ResultState(data=self.data)
             if data == '上一步':
                 return EndDateState(data=self.data)
+            elif data == '取消':
+                return InitState()
         return self
 
 class ResultState(State):
@@ -208,6 +218,8 @@ class ResultState(State):
         self.type = 'NoneReply'
         if kwargs.get('data'):
             self.data = kwargs.get('data')
+            detail_items = [QuickReplyButton(action=MessageAction(label="不用了，謝謝！", text="不用了，謝謝！"))]
+            data_detail_items = []
 
             data = pd.read_csv('insurance.csv', header=0)
             if self.data['purpose'] == '遊學':
@@ -224,14 +236,69 @@ class ResultState(State):
             for i in range(len(header)-1):
                 if selection[header[i]].values[0] and str(selection[header[i]].values[0]) != 'nan':
                     text += str(header[i])+'：'+str(selection[header[i]].values[0])+'\n'
+                    if str(header[i]) != '旅平險':
+                        detail_items.append(QuickReplyButton(action=MessageAction(label=str(header[i])[0:4], text=str(header[i])[0:4])))
+                        data_detail_items.append(str(header[i])[0:4])
+
 
             fee = selection['總保費'].values[0] * self.data['numOfPeople']
-
             text = '以下是推薦的保單內容：\n總保費：'+str(fee)+'元\n'+text
 
-            self.message = [TextSendMessage(text='以下是您輸入的資訊：\n人數：'+str(self.data['numOfPeople'])+'人\n地區：'+str(self.data['region'])+'\n目的：'+str(self.data['purpose'])+'\n日期：'+str(self.data['startDate'])+' ~ '+str(self.data['endDate'])+' (共'+str(self.data['numOfDays'])+'天)\n搭乘：'+str(self.data['flight'])), TextSendMessage(text=text)]
+            self.message = [
+                TextSendMessage(
+                    text='以下是您輸入的資訊：\n人數：'+str(self.data['numOfPeople'])+'人\n地區：'+str(self.data['region'])+'\n目的：'+str(self.data['purpose'])+'\n日期：'+str(self.data['startDate'])+' ~ '+str(self.data['endDate'])+' (共'+str(self.data['numOfDays'])+'天)\n搭乘：'+str(self.data['flight'])
+                ), 
+                TextSendMessage(text=text),
+                TextSendMessage(
+                    text='欲知保單詳細內容，可以點擊下方快速鍵以了解更多詳情哦～',
+                    quick_reply=QuickReply(
+                        items=detail_items
+                    )
+                )
+            ]
 
     def on_event(self, event, data):
         if event == 'msg':
-            return InitState()
+            if data in self.data_detail_items:
+                self.data['select_detail_item'] = data
+                self.data['detail_items'] = self.data_detail_items
+                return DetailState(data=self.data)
+            elif data == '不用了，謝謝！':
+                return FinalState()
         return self
+
+class DetailState(State):
+    def __init__(self, *args, **kwargs):
+        self.data = {}
+        if kwargs.get('data'):
+            self.data = kwargs.get('data')
+            detail_data = pd.read_csv('insurance_detail.csv', header=0)
+            selection = detail_data.loc[(detail_data['Type'].str.contains(self.data['select_detail_item'])), 'Type':'Detail']
+
+            detail_items = [QuickReplyButton(action=MessageAction(label="不用了，謝謝！", text="不用了，謝謝！"))]
+            for val in self.data['detail_items']:
+                detail_items.append(QuickReplyButton(action=MessageAction(label=str(val), text=str(val))))
+            self.message = [
+                TextSendMessage(text=str(selection['Type'])+'\n\n'+str(selection['Detail'])),
+                TextSendMessage(
+                    text='您還有什麼想要了解的內容嗎？',
+                    quick_reply=QuickReply(
+                        items=detail_items
+                    )
+                )
+            ]
+
+    def on_event(self, event, data):
+        if event == 'msg':
+            if data in self.data['detail_items']:
+                self.data['select_detail_item'] = data
+                return DetailState(data=self.data)
+            elif data == '不用了，謝謝！':
+                return FinalState()
+        return self
+
+class FinalState(State):
+    message = TextSendMessage(text='感謝您使用本服務，期待很快能再次為您服務，祝您旅途愉快！！')
+
+    def __new__(self, *args, **kwargs):
+        return InitState()
