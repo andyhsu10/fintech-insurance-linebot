@@ -54,13 +54,13 @@ def handle_message(event):
     if event.message.text == '開始使用' or not event.source.user_id in user_insurance or (event.message.text and not user_insurance[event.source.user_id].state.data):
         user_insurance[event.source.user_id] = InsuranceBot()
         line_bot_api.reply_message(event.reply_token, user_insurance[event.source.user_id].msg)
+    elif user_insurance[event.source.user_id].state.type == 'NoneReply':
+        user_insurance[event.source.user_id].on_event('msg', 'NoneReply')
+        line_bot_api.reply_message(event.reply_token, user_insurance[event.source.user_id].msg)
     else:
         user_insurance[event.source.user_id].on_event('msg', event.message.text)
         line_bot_api.reply_message(event.reply_token, user_insurance[event.source.user_id].msg)
-
-    if user_insurance[event.source.user_id].state.type == 'NoneReply':
-        user_insurance[event.source.user_id].on_event('msg', 'NoneReply')
-        line_bot_api.reply_message(event.reply_token, user_insurance[event.source.user_id].msg)
+    
 
 # 處理User postback的資訊
 @handler.add(PostbackEvent)
