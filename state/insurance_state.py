@@ -205,6 +205,7 @@ class FlightState(State):
 class ConfirmState(State):
     def __init__(self, *args, **kwargs):
         self.data = {}
+        self.type = 'NoneReply'
         if kwargs.get('data'):
             self.data = kwargs.get('data')
             self.message = TextSendMessage(text='以下是您輸入的資訊：\n人數：'+str(self.data['numOfPeople'])+'人\n地區：'+str(self.data['region'])+'\n目的：'+str(self.data['purpose'])+'\n日期：'+str(self.data['startDate'])+' ~ '+str(self.data['endDate'])+' (共'+str(self.data['numOfDays'])+'天)\n搭乘：'+str(self.data['flight']))
