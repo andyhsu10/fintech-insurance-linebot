@@ -51,7 +51,7 @@ def callback():
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     global user_insurance
-    if event.message.text == '開始使用' or not user_insurance[event.source.user_id] or (event.message.text and not user_insurance[event.source.user_id].state.data):
+    if event.message.text == '開始使用' or not event.source.user_id in user_insurance or (event.message.text and not user_insurance[event.source.user_id].state.data):
         user_insurance[event.source.user_id] = InsuranceBot()
         line_bot_api.reply_message(event.reply_token, user_insurance[event.source.user_id].msg)
     else:

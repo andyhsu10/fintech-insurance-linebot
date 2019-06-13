@@ -239,11 +239,11 @@ class ResultState(State):
                     text += str(header[i])+'：'+str(selection[header[i]].values[0])+'\n'
                     if str(header[i]) != '旅平險':
                         detail_items.append(QuickReplyButton(action=MessageAction(label=str(header[i])[0:4], text=str(header[i])[0:4])))
-                        data_detail_items.append(str(header[i])[0:4])
+                        self.data_detail_items.append(str(header[i])[0:4])
 
 
             fee = selection['總保費'].values[0] * self.data['numOfPeople']
-            text = '以下是推薦的保單內容：\n總保費：'+str(fee)+'元\n'+text
+            text = '推薦的保單內容如下：\n\n'+text+'\n總保費：'+str(fee)+'元'
 
             self.message = [
                 TextSendMessage(
