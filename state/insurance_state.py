@@ -43,7 +43,8 @@ class InitState(State):
     
     def on_event(self, event, data):
         if event == 'calculate':
-            return NumPeopleState()
+            self.data['status'] = 'calculate'
+            return NumPeopleState(data=self.data)
         return self
 
 class NumPeopleState(State):
