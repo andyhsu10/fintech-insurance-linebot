@@ -197,30 +197,18 @@ class FlightState(State):
         if event == 'msg':
             if data in flight_list:
                 self.data['flight'] = data
-                return ConfirmState(data=self.data)
+                return ResultState(data=self.data)
             if data == '上一步':
                 return EndDateState(data=self.data)
         return self
 
-class ConfirmState(State):
-    def __init__(self, *args, **kwargs):
-        self.data = {}
-        self.type = 'NoneReply'
-        if kwargs.get('data'):
-            self.data = kwargs.get('data')
-            self.message = TextSendMessage(text='以下是您輸入的資訊：\n人數：'+str(self.data['numOfPeople'])+'人\n地區：'+str(self.data['region'])+'\n目的：'+str(self.data['purpose'])+'\n日期：'+str(self.data['startDate'])+' ~ '+str(self.data['endDate'])+' (共'+str(self.data['numOfDays'])+'天)\n搭乘：'+str(self.data['flight']))
-
-    def on_event(self, event, data):
-        if event == 'msg':
-            return ResultState(data=self.data)
-        return self
-
 class ResultState(State):
     def __init__(self, *args, **kwargs):
-        self.type = 'NoneReply'
         self.data = {}
+        self.type = 'NoneReply'
         if kwargs.get('data'):
             self.data = kwargs.get('data')
+
             data = pd.read_csv('insurance.csv', header=0)
             if self.data['purpose'] == '遊學':
                 days = '30~280'
@@ -240,10 +228,10 @@ class ResultState(State):
             fee = selection['總保費'].values[0] * self.data['numOfPeople']
 
             text = '以下是推薦的保單內容：\n總保費：'+str(fee)+'元\n'+text
-            self.message = TextSendMessage(text=text)
+
+            self.message = [TextSendMessage(text='以下是您輸入的資訊：\n人數：'+str(self.data['numOfPeople'])+'人\n地區：'+str(self.data['region'])+'\n目的：'+str(self.data['purpose'])+'\n日期：'+str(self.data['startDate'])+' ~ '+str(self.data['endDate'])+' (共'+str(self.data['numOfDays'])+'天)\n搭乘：'+str(self.data['flight'])), TextSendMessage(text=text)]
 
     def on_event(self, event, data):
         if event == 'msg':
             return InitState()
         return self
-            
