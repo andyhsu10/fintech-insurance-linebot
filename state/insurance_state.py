@@ -233,7 +233,7 @@ class ResultState(State):
             text = ''
             for i in range(len(header)-1):
                 if selection[header[i]].values[0]:
-                    text += header[i]+'：'+selection[header[i]].values[0]+'\n'
+                    text += str(header[i])+'：'+str(selection[header[i]].values[0])+'\n'
 
             fee = selection['總保費'].values[0] * self.data['numOfPeople']
 
