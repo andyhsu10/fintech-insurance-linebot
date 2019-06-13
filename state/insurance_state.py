@@ -264,7 +264,7 @@ class ResultState(State):
                 self.data['detail_items'] = self.data_detail_items
                 return DetailState(data=self.data)
             else:
-                return FinalState()
+                return FinalState(data=self.data)
         return self
 
 class DetailState(State):
@@ -294,7 +294,7 @@ class DetailState(State):
                 self.data['select_detail_item'] = data
                 return DetailState(data=self.data)
             else:
-                return FinalState()
+                return FinalState(data=self.data)
         return self
 
 class FinalState(State):
