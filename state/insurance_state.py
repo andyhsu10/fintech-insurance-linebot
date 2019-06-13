@@ -280,7 +280,7 @@ class DetailState(State):
             for val in self.data['detail_items']:
                 detail_items.append(QuickReplyButton(action=MessageAction(label=str(val), text=str(val))))
             self.message = [
-                TextSendMessage(text=str(selection['Type'])+'\n\n'+str(selection['Detail'])),
+                TextSendMessage(text=str(selection['Type'].values[0])+'\n\n'+str(selection['Detail'].values[0])),
                 TextSendMessage(
                     text='您還有什麼想要了解的內容嗎？',
                     quick_reply=QuickReply(
