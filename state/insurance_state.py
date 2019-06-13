@@ -273,7 +273,7 @@ class DetailState(State):
         self.data = {}
         if kwargs.get('data'):
             self.data = kwargs.get('data')
-            detail_data = pd.read_csv('insurance_detail.csv', header=0)
+            detail_data = pd.read_csv('insurance_datail.csv', header=0)
             selection = detail_data.loc[(detail_data['Type'].str.contains(self.data['select_detail_item'])), 'Type':'Detail']
 
             detail_items = [QuickReplyButton(action=MessageAction(label="不用了，謝謝！", text="不用了，謝謝！"))]
@@ -300,6 +300,3 @@ class DetailState(State):
 
 class FinalState(State):
     message = TextSendMessage(text='感謝您使用本服務，期待很快能再次為您服務，祝您旅途愉快！！')
-
-    def __new__(self, *args, **kwargs):
-        return InitState()
