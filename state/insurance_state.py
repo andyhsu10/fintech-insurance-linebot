@@ -158,6 +158,7 @@ class StartDateState(State):
 class EndDateState(State):
     def __init__(self, *args, **kwargs):
         self.data = {}
+        self.type = 'Reply'
         if kwargs.get('data'):
             self.data = kwargs.get('data')
             self.message = TemplateSendMessage(
@@ -264,12 +265,13 @@ class ResultState(State):
                 self.data['detail_items'] = self.data_detail_items
                 return DetailState(data=self.data)
             elif data == '不用了，謝謝！':
-                return FinalState(data=self.data)
+                return FinalState()
         return self
 
 class DetailState(State):
     def __init__(self, *args, **kwargs):
         self.data = {}
+        self.type = 'Reply'
         if kwargs.get('data'):
             self.data = kwargs.get('data')
             detail_data = pd.read_csv('insurance_datail.csv', header=0)
@@ -294,13 +296,8 @@ class DetailState(State):
                 self.data['select_detail_item'] = data
                 return DetailState(data=self.data)
             elif data == '不用了，謝謝！':
-                return FinalState(data=self.data)
+                return FinalState()
         return self
 
 class FinalState(State):
     message = TextSendMessage(text='感謝您使用本服務，期待很快能再次為您服務，祝您旅途愉快！！')
-
-    def __init__(self, *args, **kwargs):
-        self.data = {}
-        if kwargs.get('data'):
-            self.data = kwargs.get('data')

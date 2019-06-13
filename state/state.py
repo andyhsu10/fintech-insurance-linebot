@@ -2,8 +2,8 @@ class State(object):
     """
     A state object which provides some utility functions for the individual states within the state machine.
     """
-
     def __init__(self, *args, **kwargs):
+        self.type = 'Reply'
         self.data = {}
         if kwargs.get('data'):
             self.data = kwargs.get('data')
