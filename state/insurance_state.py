@@ -158,7 +158,6 @@ class StartDateState(State):
 class EndDateState(State):
     def __init__(self, *args, **kwargs):
         self.data = {}
-        self.type = 'Reply'
         if kwargs.get('data'):
             self.data = kwargs.get('data')
             self.message = TemplateSendMessage(
@@ -216,7 +215,6 @@ class FlightState(State):
 class ResultState(State):
     def __init__(self, *args, **kwargs):
         self.data = {}
-        self.type = 'NoneReply'
         if kwargs.get('data'):
             self.data = kwargs.get('data')
             detail_items = [QuickReplyButton(action=MessageAction(label="不用了，謝謝！", text="不用了，謝謝！"))]
@@ -264,14 +262,13 @@ class ResultState(State):
                 self.data['select_detail_item'] = data
                 self.data['detail_items'] = self.data_detail_items
                 return DetailState(data=self.data)
-            elif data == '不用了，謝謝！':
+            else:
                 return FinalState()
         return self
 
 class DetailState(State):
     def __init__(self, *args, **kwargs):
         self.data = {}
-        self.type = 'Reply'
         if kwargs.get('data'):
             self.data = kwargs.get('data')
             detail_data = pd.read_csv('insurance_datail.csv', header=0)
@@ -295,7 +292,7 @@ class DetailState(State):
             if data in self.data['detail_items']:
                 self.data['select_detail_item'] = data
                 return DetailState(data=self.data)
-            elif data == '不用了，謝謝！':
+            else:
                 return FinalState()
         return self
 
